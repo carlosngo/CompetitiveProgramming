@@ -38,56 +38,37 @@ typedef long long ll;
 const int fx[4][2] = {{0,1}, {0,-1}, {1,0}, {-1,0}};
 const int fxx[8][2] = {{0,1}, {0,-1}, {1,0}, {-1,0}, {1,1}, {1,-1}, {-1,1}, {-1,-1}};
 
-
-
 int main() {
 	ios_base::sync_with_stdio(false); 
     cin.tie(NULL);
-	// freopen("out.txt", "wt", stdout);
-	int t;
-    SCD(t);
-    for (int ctr = 1; ctr <= t; ctr++) {
-        int totalUnits = 0;
-        int finalNode = -1;
-        vvi adjList;
-        vi nodeUnits;
-        totalUnits = 0;
-        finalNode = -1;
-        int n, m;
-        SCD(n); SCD(m);
-        adjList.assign(n, vi());
-        nodeUnits.assign(n, 0);
-        int startNode = -1;
-        for (int i = 0; i < n; i++) {
-            SCD(nodeUnits[i]);
-            if (nodeUnits[i] == 0) startNode = i;
-        }
-        for (int i = 0; i < m; i++) {
-            int from, to;
-            SCD(from); SCD(to);
-            adjList[from].PB(to);
-        }
-        queue<int> q;
-        q.push(startNode);
-        while (!q.empty()) {
-            int cur = q.front(); q.pop();
-            int maxUnits = INT_MIN;
-            int maxIndex = -1;
-            totalUnits += nodeUnits[cur];
-            if (adjList[cur].empty()) {
-                finalNode = cur;
-                break;
+	freopen("out.txt", "wt", stdout);
+	int r, c;
+    while (fscanf(stdin, "%d%d", &r, &c), r != 0 || c != 0) {
+        char grid[r][c];
+        getchar();
+        for (int i = 0; i < r; i++) {
+            for (int j = 0; j < c; j++) {
+                SCC(grid[i][j]);
             }
-            for (int i = 0; i < adjList[cur].size(); i++) {
-                int next = adjList[cur][i];
-                if (nodeUnits[next] > maxUnits) {
-                    maxUnits = nodeUnits[next];
-                    maxIndex = i;
+            getchar();
+        }
+        int ans = 0;
+        for (int i = 0; i < r; i++) {
+            for (int j = 0; j < c; j++) {
+                if (grid[i][j] == '*') {
+                    bool isStar = true;
+                    for (int k = 0; k < 8 && isStar; k++) {
+                        int nextR = i + fxx[k][0];
+                        int nextC = j + fxx[k][1];
+                        if (nextR >= 0 && nextR < r && nextC >= 0 && nextC < c) {
+                            if (grid[nextR][nextC] == '*') isStar = false;
+                        }
+                    }
+                    if (isStar) ans++;
                 }
             }
-            q.push(adjList[cur][maxIndex]);
         }
-        fprintf(stdout, "Case %d: %d %d\n", ctr, totalUnits, finalNode);
+        fprintf(stdout, "%d\n", ans);
     }
 	return 0;
 }

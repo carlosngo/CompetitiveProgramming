@@ -38,56 +38,53 @@ typedef long long ll;
 const int fx[4][2] = {{0,1}, {0,-1}, {1,0}, {-1,0}};
 const int fxx[8][2] = {{0,1}, {0,-1}, {1,0}, {-1,0}, {1,1}, {1,-1}, {-1,1}, {-1,-1}};
 
-
-
 int main() {
 	ios_base::sync_with_stdio(false); 
     cin.tie(NULL);
-	// freopen("out.txt", "wt", stdout);
+	freopen("out.txt", "wt", stdout);
 	int t;
-    SCD(t);
-    for (int ctr = 1; ctr <= t; ctr++) {
-        int totalUnits = 0;
-        int finalNode = -1;
-        vvi adjList;
-        vi nodeUnits;
-        totalUnits = 0;
-        finalNode = -1;
-        int n, m;
-        SCD(n); SCD(m);
-        adjList.assign(n, vi());
-        nodeUnits.assign(n, 0);
-        int startNode = -1;
-        for (int i = 0; i < n; i++) {
-            SCD(nodeUnits[i]);
-            if (nodeUnits[i] == 0) startNode = i;
-        }
-        for (int i = 0; i < m; i++) {
-            int from, to;
-            SCD(from); SCD(to);
+    string line;
+    cin >> t;
+    getline(cin, line);
+    getline(cin, line);
+    int ctr = 0;
+    while(t--) {
+        if (ctr > 0) fprintf(stdout, "\n");
+        int n;
+        
+        getline(cin, line);
+        n = line[0] - 'A' + 1;
+        vi values(n, -1);
+        vvi adjList(n, vi());
+        while (getline(cin, line) && line.size() > 0) {
+            int from = line[0] - 'A';
+            int to = line[1] - 'A';
             adjList[from].PB(to);
+            adjList[to].PB(from);
         }
-        queue<int> q;
-        q.push(startNode);
-        while (!q.empty()) {
-            int cur = q.front(); q.pop();
-            int maxUnits = INT_MIN;
-            int maxIndex = -1;
-            totalUnits += nodeUnits[cur];
-            if (adjList[cur].empty()) {
-                finalNode = cur;
-                break;
-            }
-            for (int i = 0; i < adjList[cur].size(); i++) {
-                int next = adjList[cur][i];
-                if (nodeUnits[next] > maxUnits) {
-                    maxUnits = nodeUnits[next];
-                    maxIndex = i;
+        int ans = 0;
+        for (int i = 0; i < n; i++) {
+            if (values[i] == -1) {
+                values[i] = ans;
+                queue<int> q;
+                q.push(i);
+                while (!q.empty()) {
+                    int cur = q.front();
+                    // printf("Cur = %d, ans = %d\n", cur, ans);
+                    q.pop();
+                    for (int j = 0; j < adjList[cur].size(); j++) {
+                        int next = adjList[cur][j];
+                        if (values[next] == -1) {
+                            values[next] = ans;
+                            q.push(next);
+                        }
+                    }
                 }
+                ans++;
             }
-            q.push(adjList[cur][maxIndex]);
         }
-        fprintf(stdout, "Case %d: %d %d\n", ctr, totalUnits, finalNode);
+        fprintf(stdout, "%d\n", ans);
+        ctr++;
     }
 	return 0;
 }
