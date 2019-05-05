@@ -43,6 +43,44 @@ int main() {
     cin.tie(NULL);
 	freopen("out.txt", "wt", stdout);
 	freopen("in.txt", "r", stdin);
-	
+	int t;
+    SCD(t);
+    while (t--) {
+        int n, m, l;
+        SCD(n); SCD(m); SCD(l);
+        vvi adjList(n, vi());
+        for (int i = 0; i < m; i++) {
+            int from, to;
+            SCD(from); SCD(to);
+            from--; to--;
+            adjList[from].PB(to);
+        }
+        int ans = 0;
+        bitset<10000> bs;
+        for (int i = 0; i < l; i++) {
+            int start;
+            SCD(start);
+            start--;
+            if (!bs.test(start)) {
+                ans++;
+                queue<int> q;
+                q.push(start);
+                bs.set(start);
+                while (!q.empty()) {
+                    int cur = q.front();
+                    q.pop();
+                    for (int j = 0; j < adjList[cur].size(); j++) {
+                        int next = adjList[cur][j];
+                        if (!bs.test(next)) {
+                            bs.set(next);
+                            ans++;
+                            q.push(next);
+                        }
+                    }
+                }
+            }
+        }
+        fprintf(stdout, "%d\n", ans);
+    }
 	return 0;
 }

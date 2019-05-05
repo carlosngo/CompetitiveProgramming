@@ -43,6 +43,42 @@ int main() {
     cin.tie(NULL);
 	freopen("out.txt", "wt", stdout);
 	freopen("in.txt", "r", stdin);
-	
+	int n;
+    int ctr = 1;
+    while (SCD(n), n != 0) {
+        int grid[n][n];
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                SCD(grid[i][j]);
+            }
+        }
+        int i = 0, j = 0;
+        fprintf(stdout, "Case %d:", ctr);
+        while (i < n / 2 && j < n / 2) {
+            int sum = 0;
+            int k, l;
+            for (k = j; k < n - j - 1; k++) {
+                sum += grid[i][k];
+            }
+            // k--;
+            for (l = i; l < n - i - 1; l++) {
+                sum += grid[l][k];
+            }
+            while (k > j) {
+                sum += grid[l][k];
+                k--;
+            }
+            while (l > i) {
+                sum += grid[l][k];
+                l--;
+            }
+            i++;
+            j++;
+            fprintf(stdout, " %d", sum);
+        }
+        if (n % 2) fprintf(stdout, " %d", grid[n / 2][n / 2]);
+        ctr++;
+        fprintf(stdout, "\n");
+    }
 	return 0;
 }
