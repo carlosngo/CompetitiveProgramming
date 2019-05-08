@@ -39,66 +39,43 @@ const int fx[4][2] = {{0,1}, {0,-1}, {1,0}, {-1,0}};
 const int fxx[8][2] = {{0,1}, {0,-1}, {1,0}, {-1,0}, {1,1}, {1,-1}, {-1,1}, {-1,-1}};
 
 int main() {
-	// ios_base::sync_with_stdio(false); 
-    // cin.tie(NULL);
+	ios_base::sync_with_stdio(false); 
+    cin.tie(NULL);
 	// freopen("out.txt", "wt", stdout);
 	// freopen("in.txt", "r", stdin);
-	int n;
-    int ctr = 1;
-    while (SCD(n) == 1) {
-        vvi adjList(n, vi());
-        map<string, int> indices;
-        vector<string> drinks(n);
+	int n, m;
+    while (fscanf(stdin, "%d%d", &n, &m), n != 0 || m != 0) {
+        vi topo;
         vi in(n, 0);
-        for (int i = 0; i < n; i++) {
-            cin >> drinks[i];
-            indices[drinks[i]] = i;
-        }
-        int m;
-        SCD(m);
+        vvi adjList(n, vi());
         for (int i = 0; i < m; i++) {
-            string from, to;
-            cin >> from >> to;
-            int dest = indices[to];
-            int src = indices[from];
-            adjList[src].PB(dest);
-            in[dest]++;
-            // in[dest] += in[src] + 1;
+            int from, to;
+            SCD(from); SCD(to);
+            from--; to--;
+            adjList[from].PB(to);
+            in[to]++;
         }
-        // for (int i = 0; i < n; i++) {
-        //     fprintf(stdout, "%d -> ", i);
-        //     for (int j = 0; j < adjList[i].size(); j++) {
-        //         fprintf(stdout, "%d ", adjList[i][j]);
-        //     }
-        //     fprintf(stdout, "\n");
-        // }
-        priority_queue<int, vi, greater<int> > q;
-        vi ans;
+        queue<int> q;
         for (int i = 0; i < n; i++) {
-            if (in[i] == 0) {
-                q.push(i);
-            }
+            if (in[i] == 0) q.push(i); 
         }
-
         while (!q.empty()) {
-            int cur = q.top();
+            int cur = q.front();
             q.pop();
-            ans.PB(cur);
+            topo.PB(cur);
             for (int i = 0; i < adjList[cur].size(); i++) {
                 int next = adjList[cur][i];
                 in[next]--;
-                if (in[next] == 0) {
-                    q.push(next);
-                }
+                if (in[next] == 0) q.push(next);
             }
         }
-        
-        fprintf(stdout, "Case #%d: Dilbert should drink beverages in this order:", ctr);
-        for (int i = 0; i < ans.size(); i++) {
-            fprintf(stdout, " %s", drinks[ans[i]].c_str());
+        if (topo.size() == n) {
+            for (int i = 0; i < n; i++) {
+                fprintf(stdout, "%d\n", topo[i] + 1);
+            }
+        } else {
+            fprintf(stdout, "IMPOSSIBLE\n");
         }
-        fprintf(stdout, ".\n\n");
-        ctr++;
     }
 	return 0;
 }
