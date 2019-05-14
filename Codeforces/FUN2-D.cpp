@@ -29,21 +29,40 @@ using namespace std;
 
 typedef pair<int,int> ii;
 typedef pair<int, ii> iii;
+typedef pair<int, iii> iiii;
 typedef vector<int> vi;
 typedef vector<vi> vvi;
 typedef vector<ii> vii;
 typedef long long ll;
+typedef pair<ll,ll> pll;
+typedef pair<ll, pll> ppll;
+typedef pair<ll, ppll> pppll;
 
 // Offset Arrays
 const int fx[4][2] = {{0,1}, {0,-1}, {1,0}, {-1,0}};
 const int fxx[8][2] = {{0,1}, {0,-1}, {1,0}, {-1,0}, {1,1}, {1,-1}, {-1,1}, {-1,-1}};
-const int UNVISITED = -1;
 
 int main() {
-	ios_base::sync_with_stdio(false); 
-    cin.tie(NULL);
-	freopen("out.txt", "wt", stdout);
-	freopen("in.txt", "r", stdin);
-	
+	pppll ans[801];
+    ans[1] = pppll(2, ppll(2, pll(1, 0)));
+    ans[2] = pppll(11, ppll(16, pll(8, 4)));
+    for (int i = 3; i < 801; i++) {
+        pppll val;
+        val.first = (ans[i - 1].first * 2 + ans[i - 2].first * 7) ;
+        val.second.first = ((ans[i - 1].second.first * 2) + (ans[i - 1].first * 2) + 
+            (ans[i - 2].second.first * 7) + (ans[i - 2].first * 8));
+        val.second.second.first = ((ans[i - 1].second.second.first * 2) + (ans[i - 1].first) + 
+            (ans[i - 2].second.second.first * 7) + (ans[i - 2].first * 4));
+        val.second.second.second = ((ans[i - 1].second.second.second * 2) + 
+            (ans[i - 2].second.second.second * 7) + (ans[i - 2].first * 4));
+        ans[i] = val;
+        
+    }
+    WHILEZ {
+        int ctr, n;
+        SCD(ctr); SCD(n);
+        fprintf(stdout, "%d %lld %lld %lld %lld\n", ctr, ans[n].first % (1000000000 + 7), ans[n].second.first % (1000000000 + 7), ans[n].second.second.first  % (1000000000 + 7), ans[n].second.second.second  % (1000000000 + 7));
+    }
+
 	return 0;
 }

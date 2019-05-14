@@ -39,65 +39,78 @@ const int fx[4][2] = {{0,1}, {0,-1}, {1,0}, {-1,0}};
 const int fxx[8][2] = {{0,1}, {0,-1}, {1,0}, {-1,0}, {1,1}, {1,-1}, {-1,1}, {-1,-1}};
 const int UNVISITED = -1;
 
-vi dfs_num, dfs_low, dfs_parent;
 vvi adjList;
-set<ii> bridges;
+vi dfs_num, dfs_low, dfs_parent, dove_values;
 int dfs_ctr, dfs_root, rootChildren;
+vector<bool> isArticulationPoint;
+vii articulation_points;
 
-void findBridges(int u) {
+bool compare(ii a, ii b) {
+    if (a.second > b.second) {
+        return true;
+    } else if (a.second == b.second) {
+        return a.first <= b.first;
+    } else {
+        return false;
+    }
+}
+
+void findArticulationPoints(int u) {
     dfs_num[u] = dfs_low[u] = dfs_ctr++;
+    set<int> lows;
     for (int i = 0; i < adjList[u].size(); i++) {
         int v = adjList[u][i];
         if (dfs_num[v] == UNVISITED) {
             dfs_parent[v] = u;
             if (u == dfs_root) rootChildren++;
-            findBridges(v);
-            if (dfs_low[v] > dfs_num[u]) bridges.insert(ii(min(u, v), max(u, v)));
+            findArticulationPoints(v);
+            if (dfs_low[v] >= dfs_num[u]) {
+                // if (u != dfs_root)
+                    dove_values[u]++;
+                isArticulationPoint[u] = true;
+            }
             dfs_low[u] = min(dfs_low[u], dfs_low[v]);
+            // lows.insert(dfs_low[v]);
         } else if (dfs_parent[u] != v) {
             dfs_low[u] = min(dfs_low[u], dfs_num[v]);
+            // lows.insert(dfs_low[v]);
         }
-
     }
+    // dove_values[u] = lows.size();
 }
+
 
 int main() {
 	ios_base::sync_with_stdio(false); 
     cin.tie(NULL);
 	freopen("out.txt", "wt", stdout);
 	freopen("in.txt", "r", stdin);
-	int n;
-    while (SCD(n) == 1) {
+	int n, m;
+    while (fscanf(stdin, "%d%d", &n, &m), n != 0 || m != 0) {
         adjList.assign(n, vi());
         dfs_num.assign(n, UNVISITED);
-        dfs_low.assign(n, 0);
         dfs_parent.assign(n, 0);
+        dfs_low.assign(n, 0);
+        dove_values.assign(n, 1);
         dfs_ctr = 0;
-        bridges = set<ii>();
-        for (int i = 0; i < n; i++) {
-            int from, to;
-            SCD(from);
-            int num;
-            getchar();
-            fscanf(stdin, "(%d)", &num);
-            for (int j = 0; j < num; j++) {
-                SCD(to);
-                adjList[from].PB(to);
-                adjList[to].PB(from);   
-            }
+        articulation_points = vii();
+        isArticulationPoint.assign(n, false);
+        int from, to;
+        while (fscanf(stdin, "%d%d", &from, &to), from != -1 || to != -1) {
+            adjList[from].PB(to);
+            adjList[to].PB(from);
         }
+        dfs_root = 0;
+        rootChildren = 0;
+        findArticulationPoints(0);
+        dove_values[0]--;
         for (int i = 0; i < n; i++) {
-            if (dfs_num[i] == UNVISITED) {
-                dfs_root = i;
-                rootChildren = 0;
-                findBridges(i);
-            }
+            articulation_points.PB(ii(i, dove_values[i]));
         }
-        fprintf(stdout, "%d critical links\n", bridges.size());
-        for (set<ii>::iterator itr = bridges.begin(); itr != bridges.end(); itr++) {
-            fprintf(stdout, "%d - %d\n", itr->first, itr->second);
+        sort(articulation_points.begin(), articulation_points.end(), compare);
+        for (int i = 0; i < m; i++) {
+            fprintf(stdout, "%d %d\n", articulation_points[i].first, articulation_points[i].second);
         }
         fprintf(stdout, "\n");
     }
-	return 0;
 }

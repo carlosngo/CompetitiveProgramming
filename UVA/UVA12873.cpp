@@ -39,10 +39,10 @@ const int fx[4][2] = {{0,1}, {0,-1}, {1,0}, {-1,0}};
 const int fxx[8][2] = {{0,1}, {0,-1}, {1,0}, {-1,0}, {1,1}, {1,-1}, {-1,1}, {-1,-1}};
 const int UNVISITED = -1;
 
-vi dfs_num, dfs_low, dfs_parent;
 vvi adjList;
+vi dfs_num, dfs_low, dfs_parent;
+int dfs_ctr, dfs_root;
 set<ii> bridges;
-int dfs_ctr, dfs_root, rootChildren;
 
 void findBridges(int u) {
     dfs_num[u] = dfs_low[u] = dfs_ctr++;
@@ -50,52 +50,39 @@ void findBridges(int u) {
         int v = adjList[u][i];
         if (dfs_num[v] == UNVISITED) {
             dfs_parent[v] = u;
-            if (u == dfs_root) rootChildren++;
             findBridges(v);
             if (dfs_low[v] > dfs_num[u]) bridges.insert(ii(min(u, v), max(u, v)));
             dfs_low[u] = min(dfs_low[u], dfs_low[v]);
         } else if (dfs_parent[u] != v) {
             dfs_low[u] = min(dfs_low[u], dfs_num[v]);
         }
-
     }
 }
 
 int main() {
 	ios_base::sync_with_stdio(false); 
     cin.tie(NULL);
-	freopen("out.txt", "wt", stdout);
-	freopen("in.txt", "r", stdin);
-	int n;
-    while (SCD(n) == 1) {
+	// freopen("out.txt", "wt", stdout);
+	// freopen("in.txt", "r", stdin);
+    int n, m;
+    while (fscanf(stdin, "%d%d", &n, &m), n != 0 || m != 0) {
         adjList.assign(n, vi());
         dfs_num.assign(n, UNVISITED);
         dfs_low.assign(n, 0);
         dfs_parent.assign(n, 0);
         dfs_ctr = 0;
+        dfs_root = 0;
         bridges = set<ii>();
-        for (int i = 0; i < n; i++) {
+        for (int i = 0; i < m; i++) {
             int from, to;
-            SCD(from);
-            int num;
-            getchar();
-            fscanf(stdin, "(%d)", &num);
-            for (int j = 0; j < num; j++) {
-                SCD(to);
-                adjList[from].PB(to);
-                adjList[to].PB(from);   
-            }
+            SCD(from); SCD(to);
+            adjList[from].PB(to);
+            adjList[to].PB(from);
         }
-        for (int i = 0; i < n; i++) {
-            if (dfs_num[i] == UNVISITED) {
-                dfs_root = i;
-                rootChildren = 0;
-                findBridges(i);
-            }
-        }
-        fprintf(stdout, "%d critical links\n", bridges.size());
+        findBridges(0);
+        fprintf(stdout, "%d", bridges.size());
         for (set<ii>::iterator itr = bridges.begin(); itr != bridges.end(); itr++) {
-            fprintf(stdout, "%d - %d\n", itr->first, itr->second);
+            fprintf(stdout, " %d %d", itr->first, itr->second);
         }
         fprintf(stdout, "\n");
     }

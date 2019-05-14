@@ -37,13 +37,36 @@ typedef long long ll;
 // Offset Arrays
 const int fx[4][2] = {{0,1}, {0,-1}, {1,0}, {-1,0}};
 const int fxx[8][2] = {{0,1}, {0,-1}, {1,0}, {-1,0}, {1,1}, {1,-1}, {-1,1}, {-1,-1}};
-const int UNVISITED = -1;
 
 int main() {
 	ios_base::sync_with_stdio(false); 
     cin.tie(NULL);
-	freopen("out.txt", "wt", stdout);
-	freopen("in.txt", "r", stdin);
-	
+    int n; 
+    cin >> n;
+    vvi adjList(n, vi());
+    vi colors(n, -1);
+    vi to(n);
+    vi from(n);
+    for (int i = 0; i < n - 1; i++) {
+        cin >> from[i] >> to[i];
+        from[i]--; to[i]--;
+        adjList[from[i]].PB(to[i]);
+        adjList[to[i]].PB(from[i]);
+    }
+    colors[0] = 0;
+    queue<int> q;
+    q.push(0);
+    while (!q.empty()) {
+        int cur = q.front();
+        q.pop();
+        for (int i = 0; i < adjList[cur].size(); i++) {
+            int next = adjList[cur][i];
+            if (colors[next] == -1) {
+                colors[next] = 1 - colors[cur];
+                q.push(next);
+            }
+        }
+    }
+    for (int i = 0; i < n - 1; i++) cout << colors[from[i]] << '\n';
 	return 0;
 }

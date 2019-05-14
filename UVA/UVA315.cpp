@@ -26,6 +26,7 @@ using namespace std;
 #define by(T, x) [](const T& a, const T& b) { return a.x < b.x; }
 #define PB push_back
 #define INF 1000000000
+#define UNVISITED -1
 
 typedef pair<int,int> ii;
 typedef pair<int, ii> iii;
@@ -37,67 +38,75 @@ typedef long long ll;
 // Offset Arrays
 const int fx[4][2] = {{0,1}, {0,-1}, {1,0}, {-1,0}};
 const int fxx[8][2] = {{0,1}, {0,-1}, {1,0}, {-1,0}, {1,1}, {1,-1}, {-1,1}, {-1,-1}};
-const int UNVISITED = -1;
 
-vi dfs_num, dfs_low, dfs_parent;
 vvi adjList;
-set<ii> bridges;
-int dfs_ctr, dfs_root, rootChildren;
+int dfs_num[100];
+int dfs_low[100];
+int dfs_parent[100];
+bool articulation_vertex[100];
+int ans;
+int dfs_ctr;
+int dfs_root;
+int rootChildren;
 
-void findBridges(int u) {
+void findArticulationPoints(int u) {
     dfs_num[u] = dfs_low[u] = dfs_ctr++;
     for (int i = 0; i < adjList[u].size(); i++) {
         int v = adjList[u][i];
         if (dfs_num[v] == UNVISITED) {
-            dfs_parent[v] = u;
             if (u == dfs_root) rootChildren++;
-            findBridges(v);
-            if (dfs_low[v] > dfs_num[u]) bridges.insert(ii(min(u, v), max(u, v)));
+            dfs_parent[v] = u;
+            findArticulationPoints(v);
+            if (u != dfs_root && dfs_low[v] >= dfs_num[u]) {
+                // fprintf(stdout, "%d is an articulation point because dfs_low[%d] = %d >= dfs_num[%d] = %d.\n", u, v, dfs_low[v], u, dfs_num[u]);
+                articulation_vertex[u] = true;
+            }
             dfs_low[u] = min(dfs_low[u], dfs_low[v]);
         } else if (dfs_parent[u] != v) {
             dfs_low[u] = min(dfs_low[u], dfs_num[v]);
         }
-
     }
 }
 
 int main() {
-	ios_base::sync_with_stdio(false); 
-    cin.tie(NULL);
-	freopen("out.txt", "wt", stdout);
-	freopen("in.txt", "r", stdin);
+	// ios_base::sync_with_stdio(false); 
+    // cin.tie(NULL);
+	// freopen("out.txt", "wt", stdout);
+	// freopen("in.txt", "r", stdin);
 	int n;
-    while (SCD(n) == 1) {
-        adjList.assign(n, vi());
-        dfs_num.assign(n, UNVISITED);
-        dfs_low.assign(n, 0);
-        dfs_parent.assign(n, 0);
+    while (SCD(n), n != 0) {
+        memset(dfs_num, UNVISITED, sizeof dfs_num);
+        memset(dfs_low, 0, sizeof dfs_low);
+        memset(dfs_parent, 0, sizeof dfs_parent);
+        memset(articulation_vertex, false, sizeof articulation_vertex);
         dfs_ctr = 0;
-        bridges = set<ii>();
-        for (int i = 0; i < n; i++) {
+        ans = 0;
+        adjList.assign(n, vi());
+        string line;
+        while (getline(cin, line), line != "0") {
+            stringstream ss(line);
             int from, to;
-            SCD(from);
-            int num;
-            getchar();
-            fscanf(stdin, "(%d)", &num);
-            for (int j = 0; j < num; j++) {
-                SCD(to);
+            ss >> from;
+            from--;
+            while (ss >> to) {
+                to--;
                 adjList[from].PB(to);
-                adjList[to].PB(from);   
+                adjList[to].PB(from);
             }
         }
         for (int i = 0; i < n; i++) {
             if (dfs_num[i] == UNVISITED) {
                 dfs_root = i;
                 rootChildren = 0;
-                findBridges(i);
+                findArticulationPoints(i);
+                // fprintf(stdout, "root children = %d\n", rootChildren);
+                articulation_vertex[i] = rootChildren > 1;
             }
         }
-        fprintf(stdout, "%d critical links\n", bridges.size());
-        for (set<ii>::iterator itr = bridges.begin(); itr != bridges.end(); itr++) {
-            fprintf(stdout, "%d - %d\n", itr->first, itr->second);
+        for (int i = 0; i < n; i++) {
+            if (articulation_vertex[i]) ans++;
         }
-        fprintf(stdout, "\n");
+        fprintf(stdout, "%d\n", ans);
     }
 	return 0;
 }

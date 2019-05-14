@@ -37,13 +37,14 @@ typedef long long ll;
 // Offset Arrays
 const int fx[4][2] = {{0,1}, {0,-1}, {1,0}, {-1,0}};
 const int fxx[8][2] = {{0,1}, {0,-1}, {1,0}, {-1,0}, {1,1}, {1,-1}, {-1,1}, {-1,-1}};
-const int UNVISITED = -1;
 
 int main() {
-	ios_base::sync_with_stdio(false); 
-    cin.tie(NULL);
-	freopen("out.txt", "wt", stdout);
-	freopen("in.txt", "r", stdin);
-	
+	int t;
+    cin >> t;
+    while (t--) {
+        int ctr, n;
+        cin >> ctr >> n;
+        cout << ctr << ' ' << (n + 1) * (n + 2) / 2 - 1 << '\n';
+    }
 	return 0;
 }

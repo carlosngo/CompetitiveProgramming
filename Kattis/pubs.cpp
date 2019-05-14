@@ -37,13 +37,49 @@ typedef long long ll;
 // Offset Arrays
 const int fx[4][2] = {{0,1}, {0,-1}, {1,0}, {-1,0}};
 const int fxx[8][2] = {{0,1}, {0,-1}, {1,0}, {-1,0}, {1,1}, {1,-1}, {-1,1}, {-1,-1}};
-const int UNVISITED = -1;
 
 int main() {
 	ios_base::sync_with_stdio(false); 
     cin.tie(NULL);
-	freopen("out.txt", "wt", stdout);
-	freopen("in.txt", "r", stdin);
-	
+    int n, m;
+    cin >> n >> m;
+    vvi adjList(n, vi());
+    vi colors(n, -1);
+    string sites[n];
+    for (int i = 0; i < m; i++) {
+        int from, to;
+        cin >> from >> to;
+        from--; to--;
+        adjList[from].PB(to);
+        adjList[to].PB(from);
+    }
+    bool poss = true;
+    for (int i = 0; i < n; i++) {
+        if (colors[i] == -1) {
+            colors[i] = 1;
+            sites[i] = "house";
+            queue<int> q;
+            q.push(i);
+            while (!q.empty()) {
+                int cur = q.front();
+                q.pop();
+                if (adjList[cur].empty()) poss = false;
+                for (int j = 0; j < adjList[cur].size(); j++) {
+                    int next = adjList[cur][j];
+                    if (colors[next] == -1) {
+                        colors[next] = 1 - colors[cur];
+                        if (colors[next] == 1) sites[next] = "house";
+                        else sites[next] = "pub";
+                        q.push(next);
+                    }
+                }
+            }
+        }
+    }
+    if (poss) {
+        for (int i = 0; i < n; i++) {
+            cout << sites[i] << ' ';
+        }
+    } else cout << "Impossible";
 	return 0;
 }
