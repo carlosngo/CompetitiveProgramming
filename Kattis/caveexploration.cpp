@@ -39,25 +39,11 @@ const int fx[4][2] = {{0,1}, {0,-1}, {1,0}, {-1,0}};
 const int fxx[8][2] = {{0,1}, {0,-1}, {1,0}, {-1,0}, {1,1}, {1,-1}, {-1,1}, {-1,-1}};
 const int UNVISITED = -1;
 
-class UnionFind { // OOP style
-private: vi p, rank; // remember: vi is vector<int>
-public:
-UnionFind(int N) { rank.assign(N, 0);
-p.assign(N, 0); for (int i = 0; i < N; i++) p[i] = i; }
-int findSet(int i) { return (p[i] == i) ? i : (p[i] = findSet(p[i])); }
-bool isSameSet(int i, int j) { return findSet(i) == findSet(j); }
-void unionSet(int i, int j) {
-if (!isSameSet(i, j)) { // if from different set
-int x = findSet(i), y = findSet(j);
-if (rank[x] > rank[y]) p[y] = x; // rank keeps the tree short
-else { p[x] = y;
-if (rank[x] == rank[y]) rank[y]++; }
-} } };
-
-vvi adjList, modifiedG;
+vvi adjList;
 vi dfs_num, dfs_low, dfs_parent;
 int dfs_ctr;
-UnionFind ufds(10000);
+int ans;
+vii bridges;
 
 void findBridges(int u) {
     dfs_num[u] = dfs_low[u] = dfs_ctr++;
@@ -66,7 +52,9 @@ void findBridges(int u) {
         if (dfs_num[v] == UNVISITED) {
             dfs_parent[v] = u;
             findBridges(v);
-            if (dfs_low[v] > dfs_num[u]) ufds.unionSet(u, v);
+            if (dfs_low[v] > dfs_num[u]) {
+                bridges.PB(ii(u, v));
+            }
             dfs_low[u] = min(dfs_low[u], dfs_low[v]);
         } else if (dfs_parent[u] != v) {
             dfs_low[u] = min(dfs_low[u], dfs_num[v]);
@@ -74,41 +62,44 @@ void findBridges(int u) {
     }
 }
 
+void dfs(int u) {
+    dfs_num[u] = 0;
+    ans++;
+    for (int i = 0; i < adjList[u].size(); i++) {
+        int v = adjList[u][i];
+        if (dfs_num[v] == UNVISITED) {
+            dfs(v);
+        }
+    }
+}
+
 int main() {
 	ios_base::sync_with_stdio(false); 
     cin.tie(NULL);
-	freopen("out.txt", "wt", stdout);
-	freopen("in.txt", "r", stdin);
-    int r, c, q;
-    while (fscanf(stdin, "%d%d%d", &r, &c, &q), r != 0 || c != 0 || q != 0) {
-        adjList.assign(r, vi());
-        modifiedG.assign(r, vi());
-        ufds = UnionFind(r);
-        dfs_num.assign(r, UNVISITED);
-        dfs_low.assign(r, 0);
-        dfs_parent.assign(r, 0);
-        dfs_ctr = 0;
-        for (int i = 0; i < c; i++) {
-            int from, to;
-            SCD(from); SCD(to);
-            from--; to--;
-            adjList[from].PB(to);
-            adjList[to].PB(from);
-        }
-        for (int i = 0; i < r; i++) {
-            if (dfs_num[i] == UNVISITED) {
-                findBridges(i);
-            }
-        }
-        
-        for (int i = 0; i < q; i++) {
-            int start, end;
-            SCD(start); SCD(end);
-            start--; end--;
-            if (ufds.isSameSet(start, end)) fprintf(stdout, "Y\n");
-            else fprintf(stdout, "N\n");
-        }
-        fprintf(stdout, "-\n");
+	int n, m;
+    cin >> n >> m;
+    
+    adjList.assign(n, vi());
+    dfs_num.assign(n, UNVISITED);
+    dfs_low.assign(n, 0);
+    dfs_parent.assign(n, 0);
+    dfs_ctr = 0;
+    for (int i = 0; i < m; i++) {
+        int src, dest;
+        cin >> src >> dest;
+        adjList[src].PB(dest);
+        adjList[dest].PB(src);
     }
+    ans = 0;
+    findBridges(0);
+    for (int i = 0; i < bridges.size(); i++) {
+        int u = bridges[i].first;
+        int v = bridges[i].second;
+        adjList[v].erase(std::remove(adjList[v].begin(), adjList[v].end(), u), adjList[v].end());
+        adjList[u].erase(std::remove(adjList[u].begin(), adjList[u].end(), v), adjList[u].end());
+    }
+    dfs_num.assign(n, UNVISITED);
+    dfs(0);
+    fprintf(stdout, "%d", ans);
 	return 0;
 }
