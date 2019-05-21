@@ -40,24 +40,10 @@ const int fxx[8][2] = {{0,1}, {0,-1}, {1,0}, {-1,0}, {1,1}, {1,-1}, {-1,1}, {-1,
 const int UNVISITED = -1;
 
 int main() {
-    int n;
-    cin >> n;
-    string line;
-    cin >> line;
-    vector<char> result;
-    int ans = 0;
-    if (line.length() % 2) {
-        for (int i = 0; i < line.length(); i++) {
-            
-        }
-    } 
-    for (int i = 0; i < line.length(); i += 2) {
-        if (line[i] == line[i + 1]) {
-            ans += 2;
-        } else {
-            result.PB(line[i]);
-            result.PB(line[i + 1]);
-        }
-    }
+	ios_base::sync_with_stdio(false); 
+    cin.tie(NULL);
+	freopen("out.txt", "wt", stdout);
+	freopen("in.txt", "r", stdin);
+	
 	return 0;
 }
