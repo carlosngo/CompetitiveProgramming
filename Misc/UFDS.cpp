@@ -1,4 +1,3 @@
-
 class UnionFind { // OOP style
 private: vi p, rank; // remember: vi is vector<int>
 public:

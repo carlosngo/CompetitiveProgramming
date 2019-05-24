@@ -39,23 +39,50 @@ const int fx[4][2] = {{0,1}, {0,-1}, {1,0}, {-1,0}};
 const int fxx[8][2] = {{0,1}, {0,-1}, {1,0}, {-1,0}, {1,1}, {1,-1}, {-1,1}, {-1,-1}};
 const int UNVISITED = -1;
 
-
+class UnionFind { // OOP style
+private: vi p, rank; // remember: vi is vector<int>
+public:
+UnionFind(int N) { rank.assign(N, 0);
+p.assign(N, 0); for (int i = 0; i < N; i++) p[i] = i; }
+int findSet(int i) { return (p[i] == i) ? i : (p[i] = findSet(p[i])); }
+bool isSameSet(int i, int j) { return findSet(i) == findSet(j); }
+void unionSet(int i, int j) {
+if (!isSameSet(i, j)) { // if from different set
+int x = findSet(i), y = findSet(j);
+if (rank[x] > rank[y]) p[y] = x; // rank keeps the tree short
+else { p[x] = y;
+if (rank[x] == rank[y]) rank[y]++; }
+} } };
 
 int main() {
 	ios_base::sync_with_stdio(false); 
     cin.tie(NULL);
-	freopen("out.txt", "wt", stdout);
-	freopen("in.txt", "r", stdin);
-	WHILEZ {
-        int n, m;
-        SCD(n); SCD(m);
-        vvi adjList(n, vi());
+	// freopen("out.txt", "wt", stdout);
+	// freopen("in.txt", "r", stdin);
+	int n, m;
+    while (fscanf(stdin, "%d%d", &n, &m), n != 0 || m != 0) {
+        vector<iii> edges;
+        UnionFind ufds(n);
         for (int i = 0; i < m; i++) {
-            int src, dest;
-            SCD(src); SCD(dest);
-            adjList[src].PB(dest);
+            int u, v, w;
+            SCD(u); SCD(v); SCD(w);
+            edges.PB(iii(w, ii(u, v)));
         }
-        
+        sort(edges.begin(), edges.end());
+        int ctr = 0;
+        for (int i = 0; i < edges.size(); i++) {
+            int u = edges[i].second.first;
+            int v = edges[i].second.second;
+            if (!ufds.isSameSet(u, v)) {
+                ufds.unionSet(u, v);
+            } else {
+                if (ctr) fprintf(stdout, " ");
+                fprintf(stdout, "%d", edges[i].first);
+                ctr++;
+            }
+        }
+        if (!ctr) fprintf(stdout, "forest");
+        fprintf(stdout, "\n");
     }
 	return 0;
 }

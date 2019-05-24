@@ -39,23 +39,59 @@ const int fx[4][2] = {{0,1}, {0,-1}, {1,0}, {-1,0}};
 const int fxx[8][2] = {{0,1}, {0,-1}, {1,0}, {-1,0}, {1,1}, {1,-1}, {-1,1}, {-1,-1}};
 const int UNVISITED = -1;
 
+vvi adjList;
+vi dfs_num, dfs_low, s;
+int dfs_ctr;
+vector<bool> visited;
+vector<bool> ans;
 
+void findSCC(int u) {
+    dfs_num[u] = dfs_low[u] = dfs_ctr++;
+    s.push_back(u);
+    visited[u] = true;
+    for (int i = 0; i < adjList[u].size(); i++) {
+        int v = adjList[u][i];
+        if (dfs_num[v] == UNVISITED) findSCC(v);
+        if (visited[v]) dfs_low[u] = min(dfs_low[u], dfs_low[v]);
+    }
+    if (dfs_low[u] == dfs_num[u]) {
+        while (true) {
+            int top = s.back();
+            s.pop_back();
+            visited[top] = false;
+            if (u == 0) ans[top] = true;
+            if (top == u) break;
+        }
+    }
+}
 
 int main() {
 	ios_base::sync_with_stdio(false); 
     cin.tie(NULL);
-	freopen("out.txt", "wt", stdout);
-	freopen("in.txt", "r", stdin);
-	WHILEZ {
-        int n, m;
-        SCD(n); SCD(m);
-        vvi adjList(n, vi());
+	// freopen("out.txt", "wt", stdout);
+	// freopen("in.txt", "r", stdin);
+	int n, m;
+    while (fscanf(stdin, "%d%d", &n, &m), n != 0 || m != 0) {
+        adjList.assign(n, vi());
+        dfs_num.assign(n, UNVISITED);
+        dfs_low.assign(n, 0);
+        visited.assign(n, false);
+        ans.assign(n, false);
+        s = vi();
+        dfs_ctr = 0;
         for (int i = 0; i < m; i++) {
-            int src, dest;
-            SCD(src); SCD(dest);
+            int src, dest, way;
+            SCD(src); SCD(dest); SCD(way);
+            src--; dest--;
             adjList[src].PB(dest);
+            if (way == 2) adjList[dest].PB(src);
         }
-        
+        findSCC(0);
+        bool valid = true;
+        for (int i = 0; i < n && valid; i++) {
+            if (!ans[i]) valid = false;
+        }
+        fprintf(stdout, "%d\n", valid ? 1 : 0);
     }
 	return 0;
 }
