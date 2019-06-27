@@ -42,13 +42,11 @@ int main() {
     
 	ios_base::sync_with_stdio(false); 
     cin.tie(NULL);
-	FILE *pFile = fopen("out.txt","w");
     int c, n, m, t;
     SCD(c);
     FOR (a, 0, c, 1) {
         if (a > 0) {
             fprintf(stdout, "\n");
-            fprintf(pFile, "\n");
         }
         SCD(n); SCD(t); SCD(m);
         queue<ii> left, right;
@@ -117,6 +115,6 @@ int main() {
             fprintf(stdout, "%d\n", ans[i] != 0 ? ans[i] : cur + t);
         }
     }
-	fclose(pFile);
+	// fclose(pFile);
 	return 0;
 }

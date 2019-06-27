@@ -1,0 +1,111 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+// READING INPUT
+#define SCD(t) fscanf(stdin, "%d",&t)
+#define SCLD(t) fscanf(stdin, "%ld",&t)
+#define SCLLD(t) fscanf(stdin, "%lld",&t)
+#define SCC(t) fscanf(stdin, "%c",&t)
+#define SCS(t) fscanf(stdin, "%s",t)
+#define SCF(t) fscanf(stdin, "%f",&t)
+#define SCLF(t) fscanf(stdin, "%lf",&t)
+// CHECKING BOUNDS
+#define IN(i,l,r) (l<i&&i<r) 
+#define LINR(i,l,r) (l<=i&&i<=r)
+#define LIN(i,l,r) (l<=i&&i<r)
+#define INR(i,l,r) (l<i&&i<=r)
+// LOOPS
+#define FOR(i, j, k, in) for (int i=j ; i<k ; i+=in)
+#define RFOR(i, j, k, in) for (int i=j ; i>=k ; i-=in)
+#define FOREACH(i,t) for (typeof(t.begin()) i=t.begin(); i!=t.end(); i++)
+#define WHILEZ int T; SCD(T); while(T--) 
+// MISC
+#define all(cont) cont.begin(), cont.end()
+#define rall(cont) cont.end(), cont.begin()
+#define by(T, x) [](const T& a, const T& b) { return a.x < b.x; }
+#define PB push_back
+#define INF 1000000000
+
+typedef pair<int,int> ii;
+typedef pair<int, ii> iii;
+typedef vector<int> vi;
+typedef vector<vi> vvi;
+typedef vector<ii> vii;
+typedef long long ll;
+
+// Offset Arrays
+const int fx[4][2] = {{0,1}, {0,-1}, {1,0}, {-1,0}};
+const int fxx[8][2] = {{0,1}, {0,-1}, {1,0}, {-1,0}, {1,1}, {1,-1}, {-1,1}, {-1,-1}};
+const int UNVISITED = -1;
+
+class UnionFind { // OOP style
+private: vi p, rank; // remember: vi is vector<int>
+public:
+UnionFind(int N) { rank.assign(N, 0);
+p.assign(N, 0); for (int i = 0; i < N; i++) p[i] = i; }
+int findSet(int i) { return (p[i] == i) ? i : (p[i] = findSet(p[i])); }
+bool isSameSet(int i, int j) { return findSet(i) == findSet(j); }
+void unionSet(int i, int j) {
+if (!isSameSet(i, j)) { // if from different set
+int x = findSet(i), y = findSet(j);
+if (rank[x] > rank[y]) p[y] = x; // rank keeps the tree short
+else { p[x] = y;
+if (rank[x] == rank[y]) rank[y]++; }
+} } };
+
+int main() {
+	ios_base::sync_with_stdio(false); 
+    cin.tie(NULL);
+	// freopen("out.txt", "wt", stdout);
+	// freopen("in.txt", "r", stdin);
+	int ctr = 0;
+    // fprintf(stdout, "Hi");
+    WHILEZ {
+        if (ctr) fprintf(stdout, "\n");
+        int n;
+        SCD(n);
+        UnionFind ufds(n);
+        vector<pair<double, ii> > edges;
+        vii points;
+        for (int i = 0; i < n; i++) {
+            int x, y;
+            SCD(x); SCD(y);
+            points.PB(ii(x, y));
+        }
+        for (int i = 0; i < n; i++) {
+            for (int j = i + 1; j < n; j++) {
+                double dist = sqrt((points[i].first - points[j].first) * (points[i].first - points[j].first) +
+                                    (points[i].second - points[j].second) * (points[i].second - points[j].second));
+                edges.PB(pair<double, ii>(dist, ii(i, j)));
+            }
+        }
+        // fprintf(stdout, "Hi");
+        int m;
+        SCD(m);
+        for (int i = 0; i < m; i++) {
+            int u, v;
+            SCD(u); SCD(v);
+            u--; v--;
+            ufds.unionSet(u, v);
+        }
+        sort(edges.begin(), edges.end());
+        vii ans;
+        for (int i = 0; i < edges.size(); i++) {
+            int u = edges[i].second.first;
+            int v = edges[i].second.second;
+            if (!ufds.isSameSet(u, v)) {
+                ans.PB(ii(u, v));
+                ufds.unionSet(u, v);
+            }
+        }
+        // fprintf(stdout, "Hi");
+        // sort(ans.begin(), ans.end());
+        for (int i = 0; i < ans.size(); i++) {
+            fprintf(stdout, "%d %d\n", ans[i].first + 1, ans[i].second + 1);
+        }
+        if (ans.empty()) fprintf(stdout, "No new highways need\n");
+        ctr++;
+    }
+	return 0;
+}
