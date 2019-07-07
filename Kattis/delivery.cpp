@@ -56,6 +56,9 @@ int main() {
     }
     sort(nega.begin(), nega.end(), greater<ii>());
     sort(posi.begin(), posi.end());
+    for (int i = 0; i < nega.size(); i++) {
+        fprintf(stdout, "%d %d, ", nega[i].first, nega[i].second);
+    }
     ll ans = 0;
     int currentStation = 0;
     while (!nega.empty() && nega[nega.size() - 1].second > 0) {
@@ -65,10 +68,13 @@ int main() {
         int roundTrips = (letters / k);
         int remainingLetters = letters % k;
         ans += 2 * loc * roundTrips;
-        if (currentStation + 1 == nega.size()) {
-            if (remainingLetters > 0) ans += 2 * loc;
-        } else {
-            nega[currentStation + 1].second += remainingLetters;
+        if (currentStation + 1 < nega.size()) {
+            if (remainingLetters > 0) {
+                ans += 2 * abs(nega[currentStation + 1].first);
+                nega[currentStation + 1].second -= k - remainingLetters;
+            }
+        } else if (remainingLetters > 0) {
+            ans += 2 * loc;
         }
         nega[currentStation].second = 0;
         currentStation++;
@@ -78,11 +84,12 @@ int main() {
         int loc = posi[currentStation].first;
         int letters = posi[currentStation].second;
         int roundTrips = (letters / k);
+        int remainingLetters = letters % k;
         ans += 2 * loc * roundTrips;
         if (currentStation + 1 == posi.size()) {
             ans += 2 * loc;
         } else {
-            posi[currentStation + 1].second += letters % k;
+            posi[currentStation + 1].second -= remainingLetters;
         }
         posi[currentStation].second = 0;
         currentStation++;
