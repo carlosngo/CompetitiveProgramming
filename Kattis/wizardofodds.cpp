@@ -40,21 +40,43 @@ const int fxx[8][2] = {{0,1}, {0,-1}, {1,0}, {-1,0}, {1,1}, {1,-1}, {-1,1}, {-1,
 const int UNVISITED = -1;
 
 int main() {
-    int m, s;
-    cin >> m >> s;
-	vvi adjList(s, vi());
-    for (int i = 0; i < m; i++) {
-        int prev;
-        cin >> prev;
-        prev--;
-        for (int j = 0; j < s; j++) {
-            int cur;
-            cin >> cur;
-            cur--;
-            adjList[cur].PB(prev);
-            prev = cur;
+    string n, k;
+    cin >> n >> k;
+    int minK;
+    int digits = n.length();
+    string s = digits + "";
+    int digits_of_digits = s.length();
+    string subs = k.substr(k.length() - digits_of_digits, digits_of_digits);
+    int k_sub = stoi(subs);
+    if (digits_of_digits < k.length()) {
+        minK = digits;
+        minK += 10 * digits;
+        string s2 = minK + "";
+        int new_k_digits = s2.length();
+        if (new_k_digits < k.length()) {
+            cout << "Your wish is granted!";
+        } else if (new_k_digits == k.length()) {
+            
+        } else {
+            cout << "You will become a flying monkey!";
         }
+    } else if (digits_of_digits == k.length()) {
+        
+        if (digits <= k_sub) {
+            minK = digits;
+            minK += 10 * digits;
+            string s2 = minK + "";
+            int new_k_digits = s2.length();
+            if (new_k_digits < k.length()) {
+                cout << "Your wish is granted!";
+            } else if (new_k_digits == k.length()) {
+                
+            } else {
+                cout << "You will become a flying monkey!";
+            }
+        }
+    } else {
+        cout << "You will become a flying monkey!";
     }
-	
 	return 0;
 }

@@ -40,21 +40,39 @@ const int fxx[8][2] = {{0,1}, {0,-1}, {1,0}, {-1,0}, {1,1}, {1,-1}, {-1,1}, {-1,
 const int UNVISITED = -1;
 
 int main() {
-    int m, s;
-    cin >> m >> s;
-	vvi adjList(s, vi());
-    for (int i = 0; i < m; i++) {
-        int prev;
-        cin >> prev;
-        prev--;
-        for (int j = 0; j < s; j++) {
-            int cur;
-            cin >> cur;
-            cur--;
-            adjList[cur].PB(prev);
-            prev = cur;
+    int t;
+    cin >> t;
+    for (int tc = 1; tc <= t; tc++) {
+        int n, h;
+        cin >> n >> h;
+        vi a(n);
+        vi b(n);
+        for (int i = 0; i < n; i++) cin >> a[i];
+        for (int i = 0; i < n; i++) cin >> b[i];
+        vi happyA;
+        vi happyB;
+        for (int mask = 0; mask < (1 << n); mask++) {
+            ll aTotal = 0;
+            ll bTotal = 0;
+            for (int i = 0; i < n; i++) {
+                if ((mask & (1 << i)) != 0) {
+                    aTotal += a[i];
+                    bTotal += b[i];
+                }
+            }
+            if (aTotal >= h) happyA.PB(mask);
+            if (bTotal >= h) happyB.PB(mask);
         }
+        int ans = 0;
+        for (int i = 0; i < happyA.size(); i++) {
+            for (int j = 0; j < happyB.size(); j++) {
+                int x = happyA[i];
+                int y = happyB[j];
+                if ((x | y) == (1 << n) - 1) ans++;
+            }
+        }
+        
+        cout << "Case #" << tc << ": " << ans << '\n';
     }
-	
 	return 0;
 }

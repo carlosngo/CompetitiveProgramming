@@ -40,21 +40,25 @@ const int fxx[8][2] = {{0,1}, {0,-1}, {1,0}, {-1,0}, {1,1}, {1,-1}, {-1,1}, {-1,
 const int UNVISITED = -1;
 
 int main() {
-    int m, s;
-    cin >> m >> s;
-	vvi adjList(s, vi());
-    for (int i = 0; i < m; i++) {
-        int prev;
-        cin >> prev;
-        prev--;
-        for (int j = 0; j < s; j++) {
-            int cur;
-            cin >> cur;
-            cur--;
-            adjList[cur].PB(prev);
-            prev = cur;
+    int t;
+    cin >> t;
+    for (int tc = 1; tc <= t; tc++) {
+        int n,m;
+        cin >> n >> m;
+        vi arr(n);
+        for (int i = 0; i < n; i++) cin >> arr[i];
+        sort(arr.begin(), arr.end());
+        int ans;
+        for (ans = 127; ans >= 0; ans--) {
+            int sum = 0;
+            for (int i = 0; i < n; i++) {
+                sum += (arr[i] ^ ans);
+            }
+            if (sum <= m) break;
         }
+        cout << "Case #" << tc << ": " << ans << '\n';
     }
+
 	
 	return 0;
 }

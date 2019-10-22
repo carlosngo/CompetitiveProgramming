@@ -40,21 +40,35 @@ const int fxx[8][2] = {{0,1}, {0,-1}, {1,0}, {-1,0}, {1,1}, {1,-1}, {-1,1}, {-1,
 const int UNVISITED = -1;
 
 int main() {
-    int m, s;
-    cin >> m >> s;
-	vvi adjList(s, vi());
-    for (int i = 0; i < m; i++) {
-        int prev;
-        cin >> prev;
-        prev--;
-        for (int j = 0; j < s; j++) {
-            int cur;
-            cin >> cur;
-            cur--;
-            adjList[cur].PB(prev);
-            prev = cur;
+    int n;
+    while (cin >> n, n != -1) {
+        int matrix[n][n];
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                cin >> matrix[i][j];
+            }
         }
+        for (int i = 0; i < n; i++) {
+            bool isTriangle = false;
+            int first = i;
+            // cout << "first = " << i << '\n';
+            for (int j = 0;  j < n; j++) {
+                // cout << "second = " << j << '\n';
+                if (j != i && matrix[first][j]) {
+                    int second = j;
+                    for (int k = 0; k < n; k++) {
+                        // cout << "third = " << k << '\n';
+                        if (k != i && k != j && matrix[second][k]) {
+                            int third = k;
+                            if (matrix[third][first]) isTriangle = true;
+                        }
+                    }
+
+                }
+            }
+            if (!isTriangle) cout << i << ' ';
+        }
+        cout << '\n';
     }
-	
 	return 0;
 }

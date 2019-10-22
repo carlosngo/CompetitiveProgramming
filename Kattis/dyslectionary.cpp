@@ -40,21 +40,34 @@ const int fxx[8][2] = {{0,1}, {0,-1}, {1,0}, {-1,0}, {1,1}, {1,-1}, {-1,1}, {-1,
 const int UNVISITED = -1;
 
 int main() {
-    int m, s;
-    cin >> m >> s;
-	vvi adjList(s, vi());
-    for (int i = 0; i < m; i++) {
-        int prev;
-        cin >> prev;
-        prev--;
-        for (int j = 0; j < s; j++) {
-            int cur;
-            cin >> cur;
-            cur--;
-            adjList[cur].PB(prev);
-            prev = cur;
+    
+	// freopen("out.txt", "wt", stdout);
+	// freopen("in.txt", "r", stdin);
+    string line;
+    vector<string> arr;
+    int maxLen= INT_MIN;
+    while (getline(cin, line)) {
+        if (line == "") {
+            sort(arr.begin(), arr.end());
+            for (int i = 0; i < arr.size(); i++) {
+                reverse(arr[i].begin(), arr[i].end());
+                cout << right << setw(maxLen) << arr[i] << '\n';
+            }
+            arr = vector<string>();
+            maxLen = INT_MIN;
+        cout << '\n';
+        } else {
+            reverse(line.begin(), line.end());
+            arr.PB(line);
+            maxLen = max(maxLen, (int)line.length());
         }
     }
+    sort(arr.begin(), arr.end());
+    for (int i = 0; i < arr.size(); i++) {
+        reverse(arr[i].begin(), arr[i].end());
+        cout << right << setw(maxLen) << arr[i] << '\n';
+    }
+    arr = vector<string>();
 	
 	return 0;
 }
