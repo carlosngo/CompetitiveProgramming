@@ -37,14 +37,39 @@ typedef long long ll;
 // Offset Arrays
 const int fx[4][2] = {{0,1}, {0,-1}, {1,0}, {-1,0}};
 const int fxx[8][2] = {{0,1}, {0,-1}, {1,0}, {-1,0}, {1,1}, {1,-1}, {-1,1}, {-1,-1}};
-const int cx[6][3] = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}, {-1, 0, 0}, {0, -1, 0}, {0, 0, -1}};
+
 const int UNVISITED = -1;
 
 int main() {
 	ios_base::sync_with_stdio(false); 
     cin.tie(NULL);
-	freopen("out.txt", "wt", stdout);
-	freopen("in.txt", "r", stdin);
-	
+    int r, c, n;
+    cin >> r >> c >> n;
+    int ans = 1;
+    vvi grid(r, vi(c, 0));
+    queue<ii> q;
+    for (int i = 0; i < n; i++) {
+        int row, col;
+        cin >> row >> col;
+        row--; col--;
+        if (grid[row][col] == 0) q.push(ii(row, col));
+        grid[row][col] = 1;
+    }
+    while (!q.empty()) {
+        int curR = q.front().first;
+        int curC = q.front().second;
+        int curD = grid[curR][curC];
+        ans = max(ans, curD);
+        q.pop();
+        for (int i = 0; i < 4; i++) {
+            int nextR = curR + fx[i][0];
+            int nextC = curC + fx[i][1];
+            if (LIN(nextR, 0, r) && LIN(nextC, 0, c) && grid[nextR][nextC] == 0) {
+                grid[nextR][nextC] = curD + 1;
+                q.push(ii(nextR, nextC));
+            }
+        }
+    }
+    cout << ans;
 	return 0;
 }

@@ -35,16 +35,53 @@ typedef vector<ii> vii;
 typedef long long ll;
 
 // Offset Arrays
-const int fx[4][2] = {{0,1}, {0,-1}, {1,0}, {-1,0}};
+
 const int fxx[8][2] = {{0,1}, {0,-1}, {1,0}, {-1,0}, {1,1}, {1,-1}, {-1,1}, {-1,-1}};
-const int cx[6][3] = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}, {-1, 0, 0}, {0, -1, 0}, {0, 0, -1}};
 const int UNVISITED = -1;
 
 int main() {
 	ios_base::sync_with_stdio(false); 
     cin.tie(NULL);
-	freopen("out.txt", "wt", stdout);
-	freopen("in.txt", "r", stdin);
-	
+    int n, m;
+    SCD(n); SCD(m);
+    getchar();
+    int grid[n][m];
+    int ans[n][m];
+
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            char ch;
+            SCC(ch);
+            grid[i][j] = ch - '0';
+            ans[i][j] = -1;   
+        }
+        getchar();
+    }
+    // for (int i = 0; i < n; i++) {
+    //     for (int j = 0; j < m; j++) {
+    //         printf("%d", grid[i][j]);
+    //     }
+    //     printf("\n");
+    // }
+    ans[0][0] = 0;
+    queue<ii> q;
+    q.push(ii(0, 0));
+    while (!q.empty()) {
+        int curR = q.front().first;
+        int curC = q.front().second;
+        int depth = ans[curR][curC];
+        q.pop();
+        int w = grid[curR][curC];
+        int fx[4][2] = {{0,w}, {0,-w}, {w,0}, {-w,0}};
+        for (int i = 0; i < 4; i++) {
+            int nextR = curR + fx[i][0];
+            int nextC = curC + fx[i][1];
+            if (LIN(nextR, 0, n) && LIN(nextC, 0, m) && ans[nextR][nextC] == -1) {
+                ans[nextR][nextC] = depth + 1;
+                q.push(ii(nextR, nextC));
+            }
+        }   
+    }
+    fprintf(stdout, "%d", ans[n - 1][m - 1]);
 	return 0;
 }

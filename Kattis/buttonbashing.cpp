@@ -37,14 +37,38 @@ typedef long long ll;
 // Offset Arrays
 const int fx[4][2] = {{0,1}, {0,-1}, {1,0}, {-1,0}};
 const int fxx[8][2] = {{0,1}, {0,-1}, {1,0}, {-1,0}, {1,1}, {1,-1}, {-1,1}, {-1,-1}};
-const int cx[6][3] = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}, {-1, 0, 0}, {0, -1, 0}, {0, 0, -1}};
 const int UNVISITED = -1;
 
 int main() {
 	ios_base::sync_with_stdio(false); 
     cin.tie(NULL);
-	freopen("out.txt", "wt", stdout);
-	freopen("in.txt", "r", stdin);
-	
+    WHILEZ {
+        int n, t;
+        SCD(n);
+        SCD(t);
+        vi neighbors(n);
+        FOR (i, 0, n, 1) SCD(neighbors[i]);
+        vi dist(3601, UNVISITED);
+        dist[0] = 0;
+        queue<int> q;
+        q.push(0);
+        int ans = 0;
+        while (!q.empty()) {
+            int u = q.front(); q.pop();
+            int depth = dist[u];
+            for (int i = 0; i < n; i++) {
+                int v = u + neighbors[i];
+                if (v > 3600) v = 3600;
+                if (v < 0) v = 0;
+                if (dist[v] == UNVISITED) {
+                    dist[v] = depth + 1;
+                    q.push(v);
+                }
+            }
+        }
+        int cur = t;
+        while (dist[cur] == -1) cur++;
+        fprintf(stdout, "%d %d\n", dist[cur], cur - t);
+    }
 	return 0;
 }
